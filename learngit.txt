@@ -1,0 +1,82 @@
+一、Git简介
+	1.安装Git
+		1.1在Linux上安装Git
+			
+			sudo apt-get install git
+			
+			因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。
+	
+				$ git config --global user.name "Your Name"
+				$ git config --global user.email "email@example.com"
+
+
+	2.创建版本库
+
+			创建一个版本库非常简单，首先，选择一个合适的地方，创建一个空目录：
+
+				$ mkdir learngit
+				$ cd learngit
+				$ pwd
+				/Users/michael/learngit
+
+
+				$ git init
+				Initialized empty Git repository in /Users/michael/learngit/.git/
+
+			如果你没有看到.git目录，那是因为这个目录默认是隐藏的，用ls -ah命令就可以看见。
+
+			在目录下新建一个readme.txt,编写内容：
+				Git is a version control system.
+				Git is free software.
+
+
+
+				$ git add readme.txt
+
+				$ git commit -m "wrote a readme file"
+				[master (root-commit) cb926e7] wrote a readme file
+				 1 file changed, 2 insertions(+)	
+				 create mode 100644 readme.txt
+
+
+			小结
+
+				现在总结一下今天学的两点内容：
+
+				初始化一个Git仓库，使用git init命令。
+
+				添加文件到Git仓库，分两步：
+
+    					第一步，使用命令git add <file>，注意，可反复多次使用，添加多个文件；
+
+   					第二步，使用命令git commit，完成。
+
+
+
+
+二、时光机穿梭
+			git status命令可以让我们时刻掌握仓库当前的状态；
+				$ git status
+			git diff命令：虽然Git告诉我们readme.txt被修改了，但如果能看看具体修改了什么内容，自然是很好的。
+				比如你休假两周从国外回来，第一天上班时，已经记不清上次怎么修改的readme.txt，所以，需要用git diff这个命令看看
+				$ git diff readme.txt 
+
+			小结
+
+			    	要随时掌握工作区的状态，使用git status命令。
+
+    				如果git status告诉你有文件被修改过，用git diff可以查看修改内容。
+
+	1.版本回退
+			小结
+
+				现在总结一下：
+
+				    HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id。
+
+				    穿梭前，用git log可以查看提交历史，以便确定要回退到哪个版本。
+
+				    要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本。
+
+
+
