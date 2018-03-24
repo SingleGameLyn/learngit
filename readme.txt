@@ -11,3 +11,5 @@ conflit	fixed
 
 maybe another conflit appeared.
 >>>>>>> master
+
+test add merge 
