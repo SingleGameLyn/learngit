@@ -5,3 +5,9 @@ Git tracks changes of files.
 Creating a new branch is quick and simple.
 
 
+<<<<<<< HEAD
+=======
+conflit	fixed 
+
+maybe another conflit appeared.
+>>>>>>> master
