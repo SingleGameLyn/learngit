@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import os
 
 # csvFile = open('/home/d066/Videos/NTT.csv', "r")
 # reader = csv.reader(csvFile)
