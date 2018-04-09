@@ -1,8 +1,7 @@
 #coding:utf-8
 #!/usr/bin/env python
 
-# test git update
-# commit and push
+# time 2018.4.9
 import cv2
 from numpy import *
 import numpy as np
