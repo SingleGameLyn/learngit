@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
-    iters = 1010
+    iters = 3
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -72,53 +72,121 @@ if __name__ == '__main__':
 # 读取ori的第一帧图像
     data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)
     # XX_arr = np.array(data_ori_1st_frm)
-    arr = data_ori_1st_frm[0][0].astype(int8)
+    arr_Y = data_ori_1st_frm[0][0].astype(int8)
+    arr_U = data_ori_1st_frm[1][0].astype(int8)
+    arr_V = data_ori_1st_frm[2][0].astype(int8)
 
 # 一次性读取NTT十帧图像
-    YYx = []
+    YYx_Y = []
+    YYx_U = []
+    YYx_V = []
     for i in range(iters):
         data_NTT_10frms = yuv_import(url_NTT, (height, width), 1, i)
-        YYx.append(data_NTT_10frms[0][0])
+        YYx_Y.append(data_NTT_10frms[0][0])
+        YYx_U.append(data_NTT_10frms[1][0])
+        YYx_V.append(data_NTT_10frms[2][0])
         # cv2.imshow("sohow{}".format(i), YYx[i])
         print 'This is {}th frm'.format(i)
 
-    YYx_arr = np.array(YYx)
-    print YYx_arr.shape     # (10, 1080, 1920)
-    print arr.shape
+    YYx_Y_arr = np.array(YYx_Y)
+    YYx_U_arr = np.array(YYx_U)
+    YYx_V_arr = np.array(YYx_V)
+    print YYx_Y_arr.shape     # (10, 1080, 1920)
+    print arr_Y.shape
 
-    arr2s = []
+    arr2s_Y = []
+    arr2s_U = []
+    arr2s_V = []
     for i in range(iters):
-        arr2 = YYx_arr[i].astype(int8)
-        arr2s.append(arr2)
+        arr2_Y = YYx_Y_arr[i].astype(int8)
+        arr2s_Y.append(arr2_Y)
+        arr2_U = YYx_U_arr[i].astype(int8)
+        arr2s_U.append(arr2_U)
+        arr2_V = YYx_V_arr[i].astype(int8)
+        arr2s_V.append(arr2_V)
         print 'change NTT {}th frm'.format(i)
 
-    arr2_arr = np.array(arr2s)  # NTT int8类型数据
-    print arr2_arr.shape    # (10, 1080, 1920)
+    arr2_Y_arr = np.array(arr2s_Y)  # NTT int8类型数据
+    arr2_U_arr = np.array(arr2s_U)  # NTT int8类型数据
+    arr2_V_arr = np.array(arr2s_V)  # NTT int8类型数据
+    print arr2_Y_arr.shape    # (10, 1080, 1920)
 
-    ccc_cost = []
+# cost Y
+    ccc_cost_Y = []
     for k in range(iters):
-        temp = arr - arr2_arr[k]
+        temp = arr_Y - arr2_Y_arr[k]
         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
         temp2 = np.array(temp2)
         temp3 = np.sum(temp2)
         ccc = (1.0 / (width * height)) * temp3
-        ccc_cost.append(ccc)
-        print 'calculate {}th frm'.format(k)
+        ccc_cost_Y.append(ccc)
+        print 'calculate {}th frm -- Y'.format(k)
 
-    print ccc_cost   # MSE 矩阵 <type 'list'>
-    ccc_cost_arr = np.array(ccc_cost)
-    print ccc_cost_arr  # <type 'numpy.ndarray'>
-    print ccc_cost_arr.shape    # (40,)
+    print ccc_cost_Y   # MSE 矩阵 <type 'list'>
+    ccc_cost_Y_arr = np.array(ccc_cost_Y)
+    print ccc_cost_Y_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_Y_arr.shape    # (40,)
 
-    ccc_psnr_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_arr))   # psnr 矩阵
-    print 'ccc_psnr_arr = ', ccc_psnr_arr
+    ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))   # psnr 矩阵
+    print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
+
+# cost U
+    ccc_cost_U = []
+    for k in range(iters):
+        temp = arr_U - arr2_U_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost_U.append(ccc)
+        print 'calculate {}th frm -- U'.format(k)
+
+    print ccc_cost_U   # MSE 矩阵 <type 'list'>
+    ccc_cost_U_arr = np.array(ccc_cost_U)
+    print ccc_cost_U_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_U_arr.shape    # (40,)
+
+    ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
+    print 'ccc_psnr_U_arr = ', ccc_psnr_U_arr
+
+# cost V
+    ccc_cost_V = []
+    for k in range(iters):
+        temp = arr_V - arr2_V_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost_V.append(ccc)
+        print 'calculate {}th frm -- U'.format(k)
+
+    print ccc_cost_V   # MSE 矩阵 <type 'list'>
+    ccc_cost_V_arr = np.array(ccc_cost_V)
+    print ccc_cost_V_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_V_arr.shape    # (40,)
+
+    ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
+    print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
 
 # 输出 csv 文件
-    name = ['Y_psnr']
-    test = pd.DataFrame(columns=name, data=ccc_psnr_arr)
-    # test.to_csv('/home/d066/Videos/NTT.csv')
-    test.to_csv('/home/lx/Videos/NTT.csv')
+#     name_Y = ['Y_psnr']
+#     name_U = ['U_psnr']
+    # test_Y = pd.DataFrame(columns=name_Y, data=ccc_psnr_Y_arr)
+    # test_U = pd.DataFrame(columns=name_U, data=ccc_psnr_U_arr)
+    test_Y = pd.Series(ccc_psnr_Y_arr)
+    test_U = pd.Series(ccc_psnr_U_arr)
+    test_V = pd.Series(ccc_psnr_V_arr)
+    # ident = OrderedDict( [('YANGWANZHA',80),('beijing',70),('shanghai',90),('nanjing',60),
+    #      ('guangzhou',55)])
+    test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
+    # test = pd.DataFrame({'U_psnr': test_U, 'Y_psnr': test_Y })
+    test = test[['Y_psnr', 'U_psnr', 'V_psnr']]
 
+    # test = pd.DataFrame(columns=[name_Y, name_U], data=[ccc_psnr_Y_arr, ccc_psnr_U_arr])
+    # test.to_csv('/home/d066/Videos/NTT.csv')
+    # test_Y.to_csv('/home/lx/Videos/NTT.csv')
+    # test_U.to_csv('/home/lx/Videos/NTT.csv')
+    test.to_csv('/home/lx/Videos/NTT555.csv')
     print 'start show...'
 
 
