@@ -60,9 +60,9 @@ if __name__ == '__main__':
     # # url_NTT = '/home/d066/Videos/NTT_10frms.yuv'
     # url_NTT = '/home/d066/Videos/NTT_repeat_20frms.yuv'
 
-    url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
+    url_ori = '/home/d066/Videos/CrowdRun_1080p50-0_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
-    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
+    url_NTT = '/home/d066/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
     iters = 3
     datas_ori = []
@@ -70,9 +70,9 @@ if __name__ == '__main__':
     costs = []
 
 # 读取ori的第一帧图像
-    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)
+    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)       # data_ori_1st_frm：ori的原始图像， uint8类型
     # XX_arr = np.array(data_ori_1st_frm)
-    arr_Y = data_ori_1st_frm[0][0].astype(int8)
+    arr_Y = data_ori_1st_frm[0][0].astype(int8)     # arr_Y：ori的Y分量，int8类型
     arr_U = data_ori_1st_frm[1][0].astype(int8)
     arr_V = data_ori_1st_frm[2][0].astype(int8)
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         # cv2.imshow("sohow{}".format(i), YYx[i])
         print 'This is {}th frm'.format(i)
 
-    YYx_Y_arr = np.array(YYx_Y)
+    YYx_Y_arr = np.array(YYx_Y)            # YYx_Y_arr： NTT图像数据， uint8 类型
     YYx_U_arr = np.array(YYx_U)
     YYx_V_arr = np.array(YYx_V)
     print YYx_Y_arr.shape     # (10, 1080, 1920)
@@ -129,6 +129,15 @@ if __name__ == '__main__':
 
     ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))   # psnr 矩阵
     print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
+    # SSIM  用 uint8 类型的数据
+    # Y
+    # ux_Y = np.mean(YYx_Y_arr)
+    # print ux_Y
+    # uy_Y = np.mean()
+
+    # data_ori_1st_frm：ori的原始图像， uint8类型
+    # YYx_Y_arr： NTT图像数据， uint8 类型
+    
 
 # cost U
     ccc_cost_U = []
@@ -177,12 +186,11 @@ if __name__ == '__main__':
     # test.to_csv('/home/lx/Videos/NTT555.csv')
     print 'start show...'
 
-# SSIM
-    # Y
+    print 'uint8', np.mean(data_ori_1st_frm[0][0])   # data_ori_1st_frm：ori的原始图像Y分量， uint8类型
+    print 'int8', np.mean(arr_Y)                    # arr_Y: ori的原始图像Y分量， uint8类型
     ux_Y = np.mean(YYx_Y_arr)
     print ux_Y
-    uy_Y = np.mean()
-    cv2.waitKey(0)
 
+    cv2.waitKey(0)
 end = time.clock()
 print('Running time: %s Seconds' % (end-start))
