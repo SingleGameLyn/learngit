@@ -169,33 +169,19 @@ if __name__ == '__main__':
     print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
 
 # 输出 csv 文件
-#     name_Y = ['Y_psnr']
-#     name_U = ['U_psnr']
-    # test_Y = pd.DataFrame(columns=name_Y, data=ccc_psnr_Y_arr)
-    # test_U = pd.DataFrame(columns=name_U, data=ccc_psnr_U_arr)
     test_Y = pd.Series(ccc_psnr_Y_arr)
     test_U = pd.Series(ccc_psnr_U_arr)
     test_V = pd.Series(ccc_psnr_V_arr)
-    # ident = OrderedDict( [('YANGWANZHA',80),('beijing',70),('shanghai',90),('nanjing',60),
-    #      ('guangzhou',55)])
     test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
-    # test = pd.DataFrame({'U_psnr': test_U, 'Y_psnr': test_Y })
-    test = test[['Y_psnr', 'U_psnr', 'V_psnr']]
-
-    # test = pd.DataFrame(columns=[name_Y, name_U], data=[ccc_psnr_Y_arr, ccc_psnr_U_arr])
-    # test.to_csv('/home/d066/Videos/NTT.csv')
-    # test_Y.to_csv('/home/lx/Videos/NTT.csv')
-    # test_U.to_csv('/home/lx/Videos/NTT.csv')
-    test.to_csv('/home/lx/Videos/NTT555.csv')
+    test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
+    # test.to_csv('/home/lx/Videos/NTT555.csv')
     print 'start show...'
 
-
-    # for i in range(len(data)):
-    #     print i
-    # cv2.imshow("sohow", YY)
-    # cv2.imshow("sohow2", YY2)
-    # cv2.imshow("sohow22", YY22)
-
+# SSIM
+    # Y
+    ux_Y = np.mean(YYx_Y_arr)
+    print ux_Y
+    uy_Y = np.mean()
     cv2.waitKey(0)
 
 end = time.clock()
