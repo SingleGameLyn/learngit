@@ -46,10 +46,10 @@ print column.index(max(column))
 
 height = 1080
 width = 1920
-length = 10
+length = 500
 blk_size = (height * width) * 3 / 2
 start = column.index(max(column)) * blk_size
 end = start + length * blk_size
-cut_ori = '/home/lx/Videos/NTT_repeat_40frms.yuv'
+cut_ori = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
 os.system("del_data_yuv_start_end.exe   %s   %s  %s" % (cut_ori, start, end))

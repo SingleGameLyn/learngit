@@ -25,12 +25,12 @@ def yuv_import(filename, dims, numfrm, startfrm):
     Y = []
     U = []
     V = []
-    print dims[0]
-    print dims[1]
+    # print dims[0]
+    # print dims[1]
     d00 = dims[0] // 2
     d01 = dims[1] // 2
-    print d00
-    print d01
+    # print d00
+    # print d01
     Yt = zeros((dims[0], dims[1]), uint8, 'C')
     Ut = zeros((d00, d01), uint8, 'C')
     Vt = zeros((d00, d01), uint8, 'C')
@@ -38,7 +38,7 @@ def yuv_import(filename, dims, numfrm, startfrm):
     for i in range(numfrm):
         for m in range(dims[0]):
             for n in range(dims[1]):
-                print m, n
+                # print m, n
                 Yt[m, n] = ord(fp.read(1))
         for m in range(d00):
             for n in range(d01):
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
-    iters = 2325
+    iters = 1010
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -74,14 +74,13 @@ if __name__ == '__main__':
     # XX_arr = np.array(data_ori_1st_frm)
     arr = data_ori_1st_frm[0][0].astype(int8)
 
-
-
 # 一次性读取NTT十帧图像
     YYx = []
     for i in range(iters):
         data_NTT_10frms = yuv_import(url_NTT, (height, width), 1, i)
         YYx.append(data_NTT_10frms[0][0])
         # cv2.imshow("sohow{}".format(i), YYx[i])
+        print 'This is {}th frm'.format(i)
 
     YYx_arr = np.array(YYx)
     print YYx_arr.shape     # (10, 1080, 1920)
@@ -91,18 +90,20 @@ if __name__ == '__main__':
     for i in range(iters):
         arr2 = YYx_arr[i].astype(int8)
         arr2s.append(arr2)
+        print 'change NTT {}th frm'.format(i)
 
     arr2_arr = np.array(arr2s)  # NTT int8类型数据
     print arr2_arr.shape    # (10, 1080, 1920)
 
     ccc_cost = []
     for k in range(iters):
-       temp = arr - arr2_arr[k]
-       temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-       temp2 = np.array(temp2)
-       temp3 = np.sum(temp2)
-       ccc = (1.0 / (width * height)) * temp3
-       ccc_cost.append(ccc)
+        temp = arr - arr2_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost.append(ccc)
+        print 'calculate {}th frm'.format(k)
 
     print ccc_cost   # MSE 矩阵 <type 'list'>
     ccc_cost_arr = np.array(ccc_cost)
@@ -118,9 +119,6 @@ if __name__ == '__main__':
     # test.to_csv('/home/d066/Videos/NTT.csv')
     test.to_csv('/home/lx/Videos/NTT.csv')
 
-
-
-
     print 'start show...'
 
 
@@ -132,6 +130,5 @@ if __name__ == '__main__':
 
     cv2.waitKey(0)
 
-print '???????/'
 end = time.clock()
 print('Running time: %s Seconds' % (end-start))
