@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
-    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
+    url_NTT = '/home/lx/Videos/NTT_repeat_20frms.yuv'
 
     iters = 10
     datas_ori = []
