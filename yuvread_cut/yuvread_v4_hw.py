@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
-    iters = 1010
+    iters = 10
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         data_NTT_10frms = yuv_import(url_NTT, (height, width), 1, i)
         YYx.append(data_NTT_10frms[0][0])
         # cv2.imshow("sohow{}".format(i), YYx[i])
-        print 'This is {}th frm'.format(i)
+        print 'This is {}th frm -- NTT'.format(i)
 
     YYx_arr = np.array(YYx)
     print YYx_arr.shape     # (10, 1080, 1920)
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     for i in range(iters):
         arr2 = YYx_arr[i].astype(int8)
         arr2s.append(arr2)
-        print 'change NTT {}th frm'.format(i)
+        print 'change NTT {}th frm -- NTT'.format(i)
 
     arr2_arr = np.array(arr2s)  # NTT int8类型数据
     print arr2_arr.shape    # (10, 1080, 1920)
