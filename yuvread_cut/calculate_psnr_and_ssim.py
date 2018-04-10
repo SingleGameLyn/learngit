@@ -109,62 +109,127 @@ if __name__ == '__main__':
     print Ori_int8_Y_arr.shape  # (10, 1080, 1920)
 
 # 读取NTT的 iters 帧图像
-#     NTT_Y = []
-#     NTT_U = []
-#     NTT_V = []
-#     for i in range(iters):
-#         data_NTT = yuv_import(url_NTT, (height, width), 1, i)
-#         NTT_Y.append(data_NTT[0][0])
-#         NTT_U.append(data_NTT[1][0])
-#         NTT_V.append(data_NTT[2][0])
-#         # cv2.imshow("sohow{}".format(i), YYx[i])
-#         print 'This is {}th frm -- NTT'.format(i)
-#
-#     NTT_Y_arr = np.array(NTT_Y)  # YYx_Y_arr： NTT图像数据， uint8 类型
-#     NTT_U_arr = np.array(NTT_U)
-#     NTT_V_arr = np.array(NTT_V)
-#     print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
-#
-#     # print NTT_Y_arr.shape
-#
-#     NTT_int8_Y = []
-#     NTT_int8_U = []
-#     NTT_int8_V = []
-#     for i in range(iters):
-#         arr2_Y = NTT_Y_arr[i].astype(int8)
-#         NTT_int8_Y.append(arr2_Y)
-#         arr2_U = NTT_U_arr[i].astype(int8)
-#         NTT_int8_U.append(arr2_U)
-#         arr2_V = NTT_V_arr[i].astype(int8)
-#         NTT_int8_V.append(arr2_V)
-#         print 'change NTT {}th frm'.format(i)
-#
-#     NTT_int8_Y_arr = np.array(NTT_int8_Y)  # NTT int8类型数据
-#     NTT_int8_U_arr = np.array(NTT_int8_U)  # NTT int8类型数据
-#     NTT_int8_V_arr = np.array(NTT_int8_V)  # NTT int8类型数据
-#     print NTT_int8_Y_arr.shape  # (10, 1080, 1920)
+    NTT_Y = []
+    NTT_U = []
+    NTT_V = []
+    for i in range(iters):
+        data_NTT = yuv_import(url_NTT, (height, width), 1, i)
+        NTT_Y.append(data_NTT[0][0])
+        NTT_U.append(data_NTT[1][0])
+        NTT_V.append(data_NTT[2][0])
+        # cv2.imshow("sohow{}".format(i), YYx[i])
+        print 'This is {}th frm -- NTT'.format(i)
+
+    NTT_Y_arr = np.array(NTT_Y)  # YYx_Y_arr： NTT图像数据， uint8 类型
+    NTT_U_arr = np.array(NTT_U)
+    NTT_V_arr = np.array(NTT_V)
+    print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
+
+    # print NTT_Y_arr.shape
+
+    NTT_int8_Y = []
+    NTT_int8_U = []
+    NTT_int8_V = []
+    for i in range(iters):
+        arr2_Y = NTT_Y_arr[i].astype(int8)
+        NTT_int8_Y.append(arr2_Y)
+        arr2_U = NTT_U_arr[i].astype(int8)
+        NTT_int8_U.append(arr2_U)
+        arr2_V = NTT_V_arr[i].astype(int8)
+        NTT_int8_V.append(arr2_V)
+        print 'change NTT {}th frm'.format(i)
+
+    NTT_int8_Y_arr = np.array(NTT_int8_Y)  # NTT int8类型数据
+    NTT_int8_U_arr = np.array(NTT_int8_U)  # NTT int8类型数据
+    NTT_int8_V_arr = np.array(NTT_int8_V)  # NTT int8类型数据
+    print NTT_int8_Y_arr.shape  # (10, 1080, 1920)
 
 # SSIM
-#     SSIM  用 uint8 类型的数据
-#     Y
-#     ux_Y = np.mean(YYx_Y_arr)
-#     print ux_Y
-#     uy_Y = np.mean()
+#     SSIM  用 uint8 类型的数据 ,     x 表示 Ori , y 表示 NTT
+
+    # 计算每一帧的均值ux
     ux_Y = []
+    uy_Y = []
     for i in range(iters):
-        temp = np.mean(Ori_Y_arr[i])    # 第i帧的均值
-        ux_Y.append(temp)
-    print type(ux_Y)    # <type 'list'>
+        temp_Ori = np.mean(Ori_Y_arr[i])    # 第i帧的均值
+        ux_Y.append(temp_Ori)
+        temp_NTT = np.mean(NTT_Y_arr[i])
+        uy_Y.append(temp_NTT)
+
+    # print type(ux_Y)    # <type 'list'>
     ux_Y_arr = np.array(ux_Y)
-    print ux_Y_arr  # [106.14581983 106.30893615 106.2186304 ]
-    print ux_Y_arr[0]   # 106.14581983
-    print ux_Y_arr.shape    # (3,)
-    print ux_Y_arr[0].shape     # ()
-    ux_Y_arr = ux_Y_arr[:, np.newaxis]
-    print ux_Y_arr.shape  # (3,1)
-    print ux_Y_arr[0]   # [106.14581983]
-    print ux_Y_arr[1]   # [106.30893615]
-    print ux_Y_arr[2]   # [106.2186304]
+    uy_Y_arr = np.array(uy_Y)
+    # print ux_Y_arr  # [106.14581983 106.30893615 106.2186304 ]
+    # print ux_Y_arr[0]   # 106.14581983
+    # print ux_Y_arr.shape    # (3,)
+    # print ux_Y_arr[0].shape     # ()
+    ux_Y_arr = ux_Y_arr[:, np.newaxis]  # (3,1) 表示3帧一列
+    uy_Y_arr = uy_Y_arr[:, np.newaxis]  # ux_Y_arr, uy_Y_arr 表示每一帧的均帧的数组,uint8类型
+
+    # 计算每一帧的方差sigma方
+
+    # 尝试 循环嵌套
+    time1 = time.clock()
+    sigma2x = []
+    sigma2y = []
+    temp3 = 0
+    for k in range(iters):
+        for i in range(height):     # 1080 行
+            for j in range(width):     # 1920 列
+                temp1 = Ori_Y_arr[k][i][j] - ux_Y_arr[k]
+                temp2 = temp1 ** 2
+                temp3 = temp3 + temp2
+        print 'temp3', temp3
+        temp4 = (1.0 / (height * width)) * temp3
+        temp3 = 0
+        sigma2x.append(temp4)
+
+    print type(sigma2x)     # <type 'list'>
+    sigma2x = np.array(sigma2x)
+    print 'sigma2x.shape', sigma2x.shape        # (3, 1)
+    print 'sigma2x', sigma2x
+    time1_end = time.clock()
+    print '循环嵌套用时:{} seconds...'.format(time1_end - time1)
+
+    # 尝试 numpy的矩阵操作
+    time2 = time.clock()
+    meanx_arr = np.ones((iters, height, width))
+    for k in range(iters):
+        for i in range(len(meanx_arr[0])):
+            for j in range(len(meanx_arr[0][0])):
+                # if meanx_arr[k][i][j] == 1:
+                    # print 'ux_Y_arr[{}] is {}'.format(k, ux_Y_arr[k])
+                meanx_arr[k][i][j] = ux_Y_arr[k]
+
+    # print ux_Y_arr
+    # print meanx_arr         # 每一帧存放该帧的均值
+    # print meanx_arr.shape   # (3, 1080, 1920)
+    sigma2x_np = []
+    for i in range(iters):
+        temp1 = Ori_Y_arr[i] - meanx_arr[i]
+        print temp1.shape
+        temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
+        # temp2 = temp1 ** 2
+        temp3 = np.sum(temp2)
+        temp4 = (1.0 / (height * width)) * temp3
+        sigma2x_np.append(temp4)
+
+    print type(sigma2x_np)
+    sigma2x_np = np.array(sigma2x_np)
+    print 'sigma2x_np.shape', sigma2x_np.shape
+    print 'sigma2x_np', sigma2x_np
+    time2_end = time.clock()
+    print 'numpy矩阵操作用时:{} seconds...'.format(time2_end - time2)
+
+
+
+
+
+
+    # print ux_Y_arr.shape  # (3,1)
+    # print ux_Y_arr[0]   # [106.14581983]
+    # print ux_Y_arr[1]   # [106.30893615]
+    # print ux_Y_arr[2]   # [106.2186304]
 
 # calculate PSNR
 #
