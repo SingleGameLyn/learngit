@@ -61,9 +61,9 @@ if __name__ == '__main__':
     url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
-    url_NTT = '/home/lx/Videos/NTT_repeat_20frms.yuv'
+    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 20
+    iters = 3
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -109,126 +109,157 @@ if __name__ == '__main__':
     print Ori_int8_Y_arr.shape  # (10, 1080, 1920)
 
 # 读取NTT的 iters 帧图像
-    NTT_Y = []
-    NTT_U = []
-    NTT_V = []
+#     NTT_Y = []
+#     NTT_U = []
+#     NTT_V = []
+#     for i in range(iters):
+#         data_NTT = yuv_import(url_NTT, (height, width), 1, i)
+#         NTT_Y.append(data_NTT[0][0])
+#         NTT_U.append(data_NTT[1][0])
+#         NTT_V.append(data_NTT[2][0])
+#         # cv2.imshow("sohow{}".format(i), YYx[i])
+#         print 'This is {}th frm -- NTT'.format(i)
+#
+#     NTT_Y_arr = np.array(NTT_Y)  # YYx_Y_arr： NTT图像数据， uint8 类型
+#     NTT_U_arr = np.array(NTT_U)
+#     NTT_V_arr = np.array(NTT_V)
+#     print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
+#
+#     # print NTT_Y_arr.shape
+#
+#     NTT_int8_Y = []
+#     NTT_int8_U = []
+#     NTT_int8_V = []
+#     for i in range(iters):
+#         arr2_Y = NTT_Y_arr[i].astype(int8)
+#         NTT_int8_Y.append(arr2_Y)
+#         arr2_U = NTT_U_arr[i].astype(int8)
+#         NTT_int8_U.append(arr2_U)
+#         arr2_V = NTT_V_arr[i].astype(int8)
+#         NTT_int8_V.append(arr2_V)
+#         print 'change NTT {}th frm'.format(i)
+#
+#     NTT_int8_Y_arr = np.array(NTT_int8_Y)  # NTT int8类型数据
+#     NTT_int8_U_arr = np.array(NTT_int8_U)  # NTT int8类型数据
+#     NTT_int8_V_arr = np.array(NTT_int8_V)  # NTT int8类型数据
+#     print NTT_int8_Y_arr.shape  # (10, 1080, 1920)
+
+# SSIM
+#     SSIM  用 uint8 类型的数据
+#     Y
+#     ux_Y = np.mean(YYx_Y_arr)
+#     print ux_Y
+#     uy_Y = np.mean()
+    ux_Y = []
     for i in range(iters):
-        data_NTT = yuv_import(url_NTT, (height, width), 1, i)
-        NTT_Y.append(data_NTT[0][0])
-        NTT_U.append(data_NTT[1][0])
-        NTT_V.append(data_NTT[2][0])
-        # cv2.imshow("sohow{}".format(i), YYx[i])
-        print 'This is {}th frm -- NTT'.format(i)
+        temp = np.mean(Ori_Y_arr[i])    # 第i帧的均值
+        ux_Y.append(temp)
+    print type(ux_Y)    # <type 'list'>
+    ux_Y_arr = np.array(ux_Y)
+    print ux_Y_arr  # [106.14581983 106.30893615 106.2186304 ]
+    print ux_Y_arr[0]   # 106.14581983
+    print ux_Y_arr.shape    # (3,)
+    print ux_Y_arr[0].shape     # ()
+    ux_Y_arr = ux_Y_arr[:, np.newaxis]
+    print ux_Y_arr.shape  # (3,1)
+    print ux_Y_arr[0]   # [106.14581983]
+    print ux_Y_arr[1]   # [106.30893615]
+    print ux_Y_arr[2]   # [106.2186304]
 
-    NTT_Y_arr = np.array(NTT_Y)  # YYx_Y_arr： NTT图像数据， uint8 类型
-    NTT_U_arr = np.array(NTT_U)
-    NTT_V_arr = np.array(NTT_V)
-    print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
-
-    # print NTT_Y_arr.shape
-
-    NTT_int8_Y = []
-    NTT_int8_U = []
-    NTT_int8_V = []
-    for i in range(iters):
-        arr2_Y = NTT_Y_arr[i].astype(int8)
-        NTT_int8_Y.append(arr2_Y)
-        arr2_U = NTT_U_arr[i].astype(int8)
-        NTT_int8_U.append(arr2_U)
-        arr2_V = NTT_V_arr[i].astype(int8)
-        NTT_int8_V.append(arr2_V)
-        print 'change NTT {}th frm'.format(i)
-
-    NTT_int8_Y_arr = np.array(NTT_int8_Y)  # NTT int8类型数据
-    NTT_int8_U_arr = np.array(NTT_int8_U)  # NTT int8类型数据
-    NTT_int8_V_arr = np.array(NTT_int8_V)  # NTT int8类型数据
-    print NTT_int8_Y_arr.shape  # (10, 1080, 1920)
-
-# cost Y
-    ccc_cost_Y = []
-    for k in range(iters):
-        temp = Ori_int8_Y_arr[k] - NTT_int8_Y_arr[k]
-
-        # temp = Ori_Y_arr - NTT_int8_Y_arr[k]
-
-        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-        temp2 = np.array(temp2)
-        temp3 = np.sum(temp2)
-        ccc = (1.0 / (width * height)) * temp3
-        ccc_cost_Y.append(ccc)
-        print 'calculate {}th frm -- Y'.format(k)
-
-    print ccc_cost_Y  # MSE 矩阵 <type 'list'>
-    ccc_cost_Y_arr = np.array(ccc_cost_Y)
-    print ccc_cost_Y_arr  # <type 'numpy.ndarray'>
-    print ccc_cost_Y_arr.shape  # (40,)
-
-    ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
-    print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
-    #
-    # SSIM  用 uint8 类型的数据
-    # Y
-    # ux_Y = np.mean(YYx_Y_arr)
-    # print ux_Y
-    # uy_Y = np.mean()
-    #
-    # data_ori_1st_frm：ori的原始图像， uint8类型
-    # YYx_Y_arr： NTT图像数据， uint8 类型
-    # print data_ori_1st_frm[0][0] >= 0   # 全部True
-    # print arr_Y >= 0    # 有True, 有False
-    # k = []
-    # for i in range(iters):
-    #     data_arr = np.array(data_ori_1st_frm[i][0])
-    #     ux_Y = np.mean(data_arr)
-    #     k.append(ux_Y)
-    # print k
-    #
-
-# cost U
-    ccc_cost_U = []
-    for k in range(iters):
-        temp = Ori_int8_U_arr[k] - NTT_int8_U_arr[k]
-        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-        temp2 = np.array(temp2)
-        temp3 = np.sum(temp2)
-        ccc = (1.0 / (width * height)) * temp3
-        ccc_cost_U.append(ccc)
-        print 'calculate {}th frm -- U'.format(k)
-
-    print ccc_cost_U   # MSE 矩阵 <type 'list'>
-    ccc_cost_U_arr = np.array(ccc_cost_U)
-    print ccc_cost_U_arr  # <type 'numpy.ndarray'>
-    print ccc_cost_U_arr.shape    # (40,)
-
-    ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
-    print 'ccc_psnr_U_arr = ', ccc_psnr_U_arr
-
-# cost V
-    ccc_cost_V = []
-    for k in range(iters):
-        temp = Ori_int8_V_arr[k] - NTT_int8_V_arr[k]
-        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-        temp2 = np.array(temp2)
-        temp3 = np.sum(temp2)
-        ccc = (1.0 / (width * height)) * temp3
-        ccc_cost_V.append(ccc)
-        print 'calculate {}th frm -- U'.format(k)
-
-    print ccc_cost_V   # MSE 矩阵 <type 'list'>
-    ccc_cost_V_arr = np.array(ccc_cost_V)
-    print ccc_cost_V_arr  # <type 'numpy.ndarray'>
-    print ccc_cost_V_arr.shape    # (40,)
-
-    ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
-    print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
+# calculate PSNR
+#
+# # cost Y
+#     ccc_cost_Y = []
+#     for k in range(iters):
+#         temp = Ori_int8_Y_arr[k] - NTT_int8_Y_arr[k]
+#
+#         # temp = Ori_Y_arr - NTT_int8_Y_arr[k]
+#
+#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+#         temp2 = np.array(temp2)
+#         temp3 = np.sum(temp2)
+#         ccc = (1.0 / (width * height)) * temp3
+#         ccc_cost_Y.append(ccc)
+#         print 'calculate {}th frm -- Y'.format(k)
+#
+#     print ccc_cost_Y  # MSE 矩阵 <type 'list'>
+#     ccc_cost_Y_arr = np.array(ccc_cost_Y)
+#     print ccc_cost_Y_arr  # <type 'numpy.ndarray'>
+#     print ccc_cost_Y_arr.shape  # (40,)
+#
+#     ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
+#     print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
+#
+# # SSIM
+#     # SSIM  用 uint8 类型的数据
+#     # Y
+#     # ux_Y = np.mean(YYx_Y_arr)
+#     # print ux_Y
+#     # uy_Y = np.mean()
+#     ux_Y = []
+#     for i in range(iters):
+#         temp = np.mean(Ori_Y_arr[i])    # 第i帧的均值
+#         ux_Y.append(temp)
+#
+#
+#
+#     # data_ori_1st_frm：ori的原始图像， uint8类型
+#     # YYx_Y_arr： NTT图像数据， uint8 类型
+#     # print data_ori_1st_frm[0][0] >= 0   # 全部True
+#     # print arr_Y >= 0    # 有True, 有False
+#     # k = []
+#     # for i in range(iters):
+#     #     data_arr = np.array(data_ori_1st_frm[i][0])
+#     #     ux_Y = np.mean(data_arr)
+#     #     k.append(ux_Y)
+#     # print k
+#     #
+#
+# # cost U
+#     ccc_cost_U = []
+#     for k in range(iters):
+#         temp = Ori_int8_U_arr[k] - NTT_int8_U_arr[k]
+#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+#         temp2 = np.array(temp2)
+#         temp3 = np.sum(temp2)
+#         ccc = (1.0 / (width * height)) * temp3
+#         ccc_cost_U.append(ccc)
+#         print 'calculate {}th frm -- U'.format(k)
+#
+#     print ccc_cost_U   # MSE 矩阵 <type 'list'>
+#     ccc_cost_U_arr = np.array(ccc_cost_U)
+#     print ccc_cost_U_arr  # <type 'numpy.ndarray'>
+#     print ccc_cost_U_arr.shape    # (40,)
+#
+#     ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
+#     print 'ccc_psnr_U_arr = ', ccc_psnr_U_arr
+#
+# # cost V
+#     ccc_cost_V = []
+#     for k in range(iters):
+#         temp = Ori_int8_V_arr[k] - NTT_int8_V_arr[k]
+#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+#         temp2 = np.array(temp2)
+#         temp3 = np.sum(temp2)
+#         ccc = (1.0 / (width * height)) * temp3
+#         ccc_cost_V.append(ccc)
+#         print 'calculate {}th frm -- U'.format(k)
+#
+#     print ccc_cost_V   # MSE 矩阵 <type 'list'>
+#     ccc_cost_V_arr = np.array(ccc_cost_V)
+#     print ccc_cost_V_arr  # <type 'numpy.ndarray'>
+#     print ccc_cost_V_arr.shape    # (40,)
+#
+#     ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
+#     print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
 
 # 输出 csv 文件
-    test_Y = pd.Series(ccc_psnr_Y_arr)
-    test_U = pd.Series(ccc_psnr_U_arr)
-    test_V = pd.Series(ccc_psnr_V_arr)
-    test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
-    test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
-    test.to_csv('/home/lx/Videos/NTTpsnrtest.csv')
+#     test_Y = pd.Series(ccc_psnr_Y_arr)
+#     test_U = pd.Series(ccc_psnr_U_arr)
+#     test_V = pd.Series(ccc_psnr_V_arr)
+#     test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
+#     test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
+#     test.to_csv('/home/lx/Videos/NTT500of1010.csv')
     print 'start show...'
 
     # print 'uint8', np.mean(data_ori_1st_frm[0][0])   # data_ori_1st_frm：ori的原始图像Y分量， uint8类型
