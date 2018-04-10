@@ -163,36 +163,35 @@ if __name__ == '__main__':
     # print ux_Y_arr[0]   # 106.14581983
     # print ux_Y_arr.shape    # (3,)
     # print ux_Y_arr[0].shape     # ()
-    ux_Y_arr = ux_Y_arr[:, np.newaxis]  # (3,1) 表示3帧一列
-    uy_Y_arr = uy_Y_arr[:, np.newaxis]  # ux_Y_arr, uy_Y_arr 表示每一帧的均帧的数组,uint8类型
+    ux_Y_arr = ux_Y_arr[:, np.newaxis]  # (3,1) 表示3帧一列,一列是一列标量,不是子矩阵            Ori 每帧图像均值
+    uy_Y_arr = uy_Y_arr[:, np.newaxis]  # ux_Y_arr, uy_Y_arr 表示每一帧的均帧的数组,uint8类型   NTT 每帧图像均值
 
-    # 计算每一帧的方差sigma方
-
-    # 尝试 循环嵌套
+# 计算每一帧的方差sigma方
     time1 = time.clock()
-    sigma2x = []
-    sigma2y = []
-    temp3 = 0
-    for k in range(iters):
-        for i in range(height):     # 1080 行
-            for j in range(width):     # 1920 列
-                temp1 = Ori_Y_arr[k][i][j] - ux_Y_arr[k]
-                temp2 = temp1 ** 2
-                temp3 = temp3 + temp2
-        print 'temp3', temp3
-        temp4 = (1.0 / (height * width)) * temp3
-        temp3 = 0
-        sigma2x.append(temp4)
-
-    print type(sigma2x)     # <type 'list'>
-    sigma2x = np.array(sigma2x)
-    print 'sigma2x.shape', sigma2x.shape        # (3, 1)
-    print 'sigma2x', sigma2x
-    time1_end = time.clock()
-    print '循环嵌套用时:{} seconds...'.format(time1_end - time1)
-
-    # 尝试 numpy的矩阵操作
+    # # 尝试 循环嵌套
+    # sigma2x = []
+    # sigma2y = []
+    # temp3 = 0
+    # for k in range(iters):
+    #     for i in range(height):     # 1080 行
+    #         for j in range(width):     # 1920 列
+    #             temp1 = Ori_Y_arr[k][i][j] - ux_Y_arr[k]
+    #             temp2 = temp1 ** 2
+    #             temp3 = temp3 + temp2
+    #     print 'temp3', temp3
+    #     temp4 = (1.0 / (height * width)) * temp3
+    #     temp3 = 0
+    #     sigma2x.append(temp4)
+    #
+    # print type(sigma2x)     # <type 'list'>
+    # sigma2x = np.array(sigma2x)
+    # print 'sigma2x.shape', sigma2x.shape        # (3, 1)
+    # print 'sigma2x', sigma2x
+    # time1_end = time.clock()
+    # print '循环嵌套用时:{} seconds...'.format(time1_end - time1)
     time2 = time.clock()
+# 尝试 numpy的矩阵操作
+    # Ori的每一帧方差
     meanx_arr = np.ones((iters, height, width))
     for k in range(iters):
         for i in range(len(meanx_arr[0])):
@@ -215,14 +214,77 @@ if __name__ == '__main__':
         sigma2x_np.append(temp4)
 
     print type(sigma2x_np)
-    sigma2x_np = np.array(sigma2x_np)
+    sigma2x_np = np.array(sigma2x_np)       # (3,)
+    sigma2x_np = sigma2x_np[:, np.newaxis]  # (3, 1)    Ori 方差
     print 'sigma2x_np.shape', sigma2x_np.shape
     print 'sigma2x_np', sigma2x_np
     time2_end = time.clock()
     print 'numpy矩阵操作用时:{} seconds...'.format(time2_end - time2)
 
+    sigma_x_np = sqrt(sigma2x_np)   # Ori 标准差
+    print (sigma_x_np)
 
+    # NTT的每一帧方差
+    meany_arr = np.ones((iters, height, width))
+    for k in range(iters):
+        for i in range(len(meany_arr[0])):
+            for j in range(len(meany_arr[0][0])):
+                meany_arr[k][i][j] = uy_Y_arr[k]
 
+    sigma2y_np = []
+    for i in range(iters):
+        temp1 = NTT_Y_arr[i] - meany_arr[i]
+        print temp1.shape
+        temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
+        temp3 = np.sum(temp2)
+        temp4 = (1.0 / (height * width)) * temp3
+        sigma2y_np.append(temp4)
+
+    sigma2y_np = np.array(sigma2y_np)       # (3,)
+    sigma2y_np = sigma2y_np[:, np.newaxis]  # (3, 1)    NTT 方差
+    sigma_y_np = sqrt(sigma2y_np)       # NTT 标准差
+    print (sigma_y_np)
+
+    # Ori 和 NTT 对应两帧的协方差
+    ux_Y_arr_int8 = ux_Y_arr.astype(float)
+    print ux_Y_arr_int8.shape  # (3, 1)
+    uy_Y_arr_int8 = uy_Y_arr.astype(float)
+    # Ori_int8_Y_arr   (2, 1080, 1920) 同样2表示两帧视频
+    temp_arr = []
+    for k in range(iters):
+        for i in range(height):
+            for j in range(width):
+                temp1 = Ori_int8_Y_arr[k][i][j] - ux_Y_arr_int8[k]
+                temp2 = NTT_int8_Y_arr[k][i][j] - ux_Y_arr_int8[k]
+                temp3 = temp1 * temp2
+                temp_arr.append(temp3)
+        print 'calculate {}th frm of pre-conv'.format(k)
+    temp_arr = np.array(temp_arr)       # 计算 (X(i,j) - ux)*(Y(i,j) - uy)得到的矩阵
+    print temp_arr.shape
+    temp_arr = reshape(temp_arr, (iters, height, width))
+    print temp_arr.shape
+    print temp_arr[0].shape
+    print '****************************************'
+    conv_sigma_xy = []
+    for i in range(iters):
+        temp_arr_1frm_sum = np.sum(temp_arr[i])     # 第i帧的(X(i,j) - ux)*(Y(i,j) - uy)求和
+        print type(temp_arr_1frm_sum)       # <type 'numpy.float64'>
+        print temp_arr_1frm_sum
+        print temp_arr_1frm_sum.shape   # ()
+
+        temp_conv_sigma_xy = (1.0 / ((width * height) - 1)) * temp_arr_1frm_sum
+        print temp_conv_sigma_xy    # 9582.09975141
+        conv_sigma_xy.append(temp_conv_sigma_xy)
+    conv_sigma_xy_arr = np.array(conv_sigma_xy)
+    conv_sigma_xy_arr = conv_sigma_xy_arr[:, np.newaxis]
+    print conv_sigma_xy_arr.shape       # (3, 1)
+    print conv_sigma_xy_arr
+    # print temp_arr[0]
+    # print temp_arr.shape
+    a = np.sum(temp_arr[0])
+    b = (1.0 / (height * width)) * a
+    # print a
+    # print b
 
 
 
