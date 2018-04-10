@@ -210,7 +210,7 @@ if __name__ == '__main__':
         temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
         # temp2 = temp1 ** 2
         temp3 = np.sum(temp2)
-        temp4 = (1.0 / (height * width)) * temp3
+        temp4 = (1.0 / ((height * width) - 1)) * temp3
         sigma2x_np.append(temp4)
 
     print type(sigma2x_np)
@@ -278,13 +278,54 @@ if __name__ == '__main__':
     conv_sigma_xy_arr = np.array(conv_sigma_xy)
     conv_sigma_xy_arr = conv_sigma_xy_arr[:, np.newaxis]
     print conv_sigma_xy_arr.shape       # (3, 1)
-    print conv_sigma_xy_arr
+    print conv_sigma_xy_arr         # Ori NTT 对应帧的协方差
     # print temp_arr[0]
     # print temp_arr.shape
-    a = np.sum(temp_arr[0])
-    b = (1.0 / (height * width)) * a
+    # a = np.sum(temp_arr[0])
+    # b = (1.0 / (height * width)) * a
     # print a
     # print b
+    K1 = 0.01
+    K2 = 0.03
+    LL = 255
+    C1 = (K1 * LL) ** 2
+    C2 = (K2 * LL) ** 2
+    C3 = C2 / 2
+    # L(x,y)
+    L = []
+    for i in range(iters):
+        L_temp = (2 * ux_Y_arr[i] * uy_Y_arr[i] + C1) / (sigma2x_np[i] + sigma2y_np[i] + C1)
+        L.append(L_temp)
+    L = np.array(L)
+    print L
+
+    # C(x,y)
+    C = []
+    for i in range(iters):
+        C_temp = (2 * sigma_x_np[i] * sigma_y_np[i] + C2)/(sigma2x_np[i] + sigma2y_np[i] + C2)
+        C.append(C_temp)
+    C = np.array(C)
+    print C
+
+    # S(x,y)
+    S = []
+    for i in range(iters):
+        S_temp = (conv_sigma_xy_arr[i] + C3)/(sigma_x_np[i] * sigma_y_np[i] + C3)
+        S.append(S_temp)
+    S = np.array(S)
+    print S
+
+    # SSIM score
+    SSIM = []
+    for i in range(iters):
+        SSIM_temp = L[i] * C[i] * S[i]
+        SSIM.append(SSIM_temp)
+    SSIM = np.array(SSIM)
+    print SSIM
+
+
+
+
 
 
 
