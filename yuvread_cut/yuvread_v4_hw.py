@@ -24,12 +24,8 @@ def yuv_import(filename, dims, numfrm, startfrm):
     Y = []
     U = []
     V = []
-    # print dims[0]
-    # print dims[1]
     d00 = dims[0] // 2
     d01 = dims[1] // 2
-    # print d00
-    # print d01
     Yt = zeros((dims[0], dims[1]), uint8, 'C')
     Ut = zeros((d00, d01), uint8, 'C')
     Vt = zeros((d00, d01), uint8, 'C')
@@ -55,88 +51,53 @@ def yuv_import(filename, dims, numfrm, startfrm):
 if __name__ == '__main__':
     width = 1920
     height = 1080
-    # url_ori = '/home/d066/Videos/CrowdRun_1080p50-0_10frms.yuv'
-    # # url_NTT = '/home/d066/Videos/NTT_10frms.yuv'
-    # url_NTT = '/home/d066/Videos/NTT_repeat_20frms.yuv'
 
     url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
-    # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     url_NTT = '/home/lx/Videos/NTT_repeat_20frms.yuv'
 
     iters = 3
-    datas_ori = []
-    datas_NTT = []
-    costs = []
 
 # 读取ori的第一帧图像
-    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)   # ori第一帧图像的数据,uint8类型
-    # XX_arr = np.array(data_ori_1st_frm)
-    # arr = data_ori_1st_frm[0][0].astype(int8)
-    print type(data_ori_1st_frm)    # <type 'tuple'>
-    arr_list = ndarray.tolist(data_ori_1st_frm[0][0])   # 找psnr的峰值,只需要用Y分量即可, 先转成list
-    print type(arr_list)    # <type 'list'>
-    arr = array(arr_list)   # 在转成 array , 得到 int64类型数据
-    print type(arr)         # <type 'numpy.ndarray'>
-    # NTT_int8_Y_list = ndarray.tolist(NTT_Y_arr)
-    # NTT_int8_Y_arr = array(NTT_int8_Y_list)
+    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)   # ori第一帧图像的数据,uint8类型   <type 'tuple'>
+    Ori_int64_list = ndarray.tolist(data_ori_1st_frm[0][0])   # 找psnr的峰值,只需要用Y分量即可, 先转成list   <type 'list'>
+    Ori_int64_arr = array(Ori_int64_list)   # 在转成 array , 得到 int64类型数据   <type 'numpy.ndarray'>
 
 # 一次性读取NTT十帧图像
-    YYx = []
+    NTT = []
     for i in range(iters):
         data_NTT_10frms = yuv_import(url_NTT, (height, width), 1, i)
-        YYx.append(data_NTT_10frms[0][0])
-        # cv2.imshow("sohow{}".format(i), YYx[i])
+        NTT.append(data_NTT_10frms[0][0])
+        # cv2.imshow("sohow{}".format(i), NTT[i])
         print 'This is {}th frm -- NTT'.format(i)
 
-    YYx_arr = np.array(YYx)     # NTT uint8类型数据
-    print YYx_arr.shape     # (10, 1080, 1920)
-    print arr.shape
+    NTT_arr = np.array(NTT)     # NTT uint8类型数据    (10, 1080, 1920)
 
-    # arr2s = []
-    # for i in range(iters):
-    #     arr2 = YYx_arr[i].astype(int8)
-    #     arr2s.append(arr2)
-    #     print 'change NTT {}th frm -- NTT'.format(i)
+    NTT_list = ndarray.tolist(NTT_arr)  # 先转list
+    NTT_int64_arr = np.array(NTT_list)      # 再转array, 得到 NTT int8类型数据   (10, 1080, 1920)
 
-    arr2_list = ndarray.tolist(YYx_arr)  # 先转list
-    arr2_arr = np.array(arr2_list)      # 再转array, 得到 NTT int8类型数据
-
-    # arr2_arr = np.array(arr2s)  # NTT int8类型数据
-
-    print arr2_arr.shape    # (10, 1080, 1920)
-
-    ccc_cost = []
+    mse = []
     for k in range(iters):
-        temp = arr - arr2_arr[k]
+        temp = Ori_int64_arr - NTT_int64_arr[k]
         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
         temp2 = np.array(temp2)
         temp3 = np.sum(temp2)
         ccc = (1.0 / (width * height)) * temp3
-        ccc_cost.append(ccc)
+        mse.append(ccc)
         print 'calculate {}th frm'.format(k)
 
-    print ccc_cost   # MSE 矩阵 <type 'list'>
-    ccc_cost_arr = np.array(ccc_cost)
-    print ccc_cost_arr  # <type 'numpy.ndarray'>
-    print ccc_cost_arr.shape    # (40,)
+    # print mse   # MSE 矩阵 <type 'list'>
+    mse_arr = np.array(mse)       # <type 'numpy.ndarray'>    shape:(40,)
 
-    ccc_psnr_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_arr))   # psnr 矩阵
-    print 'ccc_psnr_arr = ', ccc_psnr_arr
+    psnr_arr = 20 * np.log10(255 / np.sqrt(mse_arr))   # psnr 矩阵
+    print 'psnr_arr = ', psnr_arr
 
 # 输出 csv 文件
     name = ['Y_psnr']
-    test = pd.DataFrame(columns=name, data=ccc_psnr_arr)
-    # test.to_csv('/home/d066/Videos/NTT.csv')
-    # test.to_csv('/home/lx/Videos/NTT.csv')
+    psnr_data = pd.DataFrame(columns=name, data=psnr_arr)
+    # psnr_data.to_csv('/home/d066/Videos/NTT.csv')
+    psnr_data.to_csv('/home/lx/Videos/NTT.csv')
 
     print 'start show...'
-
-
-    # for i in range(len(data)):
-    #     print i
-    # cv2.imshow("sohow", YY)
-    # cv2.imshow("sohow2", YY2)
-    # cv2.imshow("sohow22", YY22)
 
     cv2.waitKey(0)
 
