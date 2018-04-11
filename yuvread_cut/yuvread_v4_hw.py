@@ -52,13 +52,13 @@ if __name__ == '__main__':
     width = 1920
     height = 1080
 
-    url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
-    url_NTT = '/home/lx/Videos/NTT_repeat_20frms.yuv'
+    url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
+    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
     iters = 3
 
 # 读取ori的第一帧图像
-    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)   # ori第一帧图像的数据,uint8类型   <type 'tuple'>
+    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 1)   # ori第一帧图像的数据,uint8类型   <type 'tuple'>
     Ori_int64_list = ndarray.tolist(data_ori_1st_frm[0][0])   # 找psnr的峰值,只需要用Y分量即可, 先转成list   <type 'list'>
     Ori_int64_arr = array(Ori_int64_list)   # 在转成 array , 得到 int64类型数据   <type 'numpy.ndarray'>
 

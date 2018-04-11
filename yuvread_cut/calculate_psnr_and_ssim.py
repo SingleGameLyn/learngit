@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 3
+    iters = 10
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -80,48 +80,16 @@ if __name__ == '__main__':
         print 'This is {}th frm -- Ori'.format(i)
 
     Ori_Y_arr = np.array(Ori_Y)  # Ori_Y_arr: Ori图像数据Y, uint8 类型
-    tempk = ndarray.tolist(Ori_Y_arr)
-    tempk2 = array(tempk)
-    tempk2 = reshape(tempk2, (iters, height, width))
-    print 'tempk2.shape', tempk2.shape
-
-    print type(tempk)  # <type 'list'>
-    print size(tempk)   # 2073600
-    print 'The shape of Ori_Y_arr is :', Ori_Y_arr.shape       # (3, 1080, 1920)  3表示帧数
     Ori_U_arr = np.array(Ori_U)
     Ori_V_arr = np.array(Ori_V)
 
-    # data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)  # data_ori_1st_frm：ori的原始图像， uint8类型
-    # # XX_arr = np.array(data_ori_1st_frm)
-    # Ori_Y_arr = data_ori_1st_frm[0][0].astype(int8)  # arr_Y：ori的Y分量，int8类型
-    # Ori_U_arr = data_ori_1st_frm[1][0].astype(int8)
-    # Ori_V_arr = data_ori_1st_frm[2][0].astype(int8)
-
-    Ori_int8_Y_list = ndarray.tolist(Ori_Y_arr)
-    Ori_int8_Y_arr = array(Ori_int8_Y_list)
+    Ori_int8_Y_list = ndarray.tolist(Ori_Y_arr)     # Ori   转成list 过渡
     Ori_int8_U_list = ndarray.tolist(Ori_U_arr)
-    Ori_int8_U_arr = array(Ori_int8_U_list)
     Ori_int8_V_list = ndarray.tolist(Ori_V_arr)
+
+    Ori_int8_Y_arr = array(Ori_int8_Y_list)     # (3, 1080, 1920) Ori图像数据 int64类型
+    Ori_int8_U_arr = array(Ori_int8_U_list)
     Ori_int8_V_arr = array(Ori_int8_V_list)
-
-
-    # Ori_int8_Y = []
-    # Ori_int8_U = []
-    # Ori_int8_V = []
-    # for i in range(iters):
-    #     arr2_Y = Ori_Y_arr[i].astype(int8)   # 将每一帧的数据由 uint8 转成 int8
-    #     Ori_int8_Y.append(arr2_Y)
-    #     arr2_U = Ori_U_arr[i].astype(int8)
-    #     Ori_int8_U.append(arr2_U)
-    #     arr2_V = Ori_V_arr[i].astype(int8)
-    #     Ori_int8_V.append(arr2_V)
-    #     print 'change NTT {}th frm -- Ori'.format(i)
-    #
-    # Ori_int8_Y_arr = np.array(Ori_int8_Y)  # Ori int8类型数据
-    print 'The shape of Ori_int8_Y_arr is :', Ori_int8_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
-    # Ori_int8_U_arr = np.array(Ori_int8_U)  # Ori int8类型数据
-    # Ori_int8_V_arr = np.array(Ori_int8_V)  # Ori int8类型数据
-    print Ori_int8_Y_arr.shape  # (10, 1080, 1920)
 
 # 读取NTT的 iters 帧图像
     NTT_Y = []
@@ -140,30 +108,14 @@ if __name__ == '__main__':
     NTT_V_arr = np.array(NTT_V)
     print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
 
-    # print NTT_Y_arr.shape
-
-    NTT_int8_Y_list = ndarray.tolist(NTT_Y_arr)
-    NTT_int8_Y_arr = array(NTT_int8_Y_list)
+    NTT_int8_Y_list = ndarray.tolist(NTT_Y_arr)     # NTT   转成list 过渡
     NTT_int8_U_list = ndarray.tolist(NTT_U_arr)
-    NTT_int8_U_arr = array(NTT_int8_U_list)
     NTT_int8_V_list = ndarray.tolist(NTT_V_arr)
+
+    NTT_int8_Y_arr = array(NTT_int8_Y_list)         # (3, 1080, 1920) NTT图像数据 int64类型
+    NTT_int8_U_arr = array(NTT_int8_U_list)
     NTT_int8_V_arr = array(NTT_int8_V_list)
 
-    # NTT_int8_Y = []
-    # NTT_int8_U = []
-    # NTT_int8_V = []
-    # for i in range(iters):
-    #     arr2_Y = NTT_Y_arr[i].astype(int8)
-    #     NTT_int8_Y.append(arr2_Y)
-    #     arr2_U = NTT_U_arr[i].astype(int8)
-    #     NTT_int8_U.append(arr2_U)
-    #     arr2_V = NTT_V_arr[i].astype(int8)
-    #     NTT_int8_V.append(arr2_V)
-    #     print 'change NTT {}th frm'.format(i)
-    #
-    # NTT_int8_Y_arr = np.array(NTT_int8_Y)  # NTT int8类型数据
-    # NTT_int8_U_arr = np.array(NTT_int8_U)  # NTT int8类型数据
-    # NTT_int8_V_arr = np.array(NTT_int8_V)  # NTT int8类型数据
     print NTT_int8_Y_arr.shape  # (10, 1080, 1920)
 
 # # SSIM
@@ -366,9 +318,6 @@ if __name__ == '__main__':
     ccc_cost_Y = []
     for k in range(iters):
         temp = Ori_int8_Y_arr[k] - NTT_int8_Y_arr[k]
-
-        # temp = Ori_Y_arr - NTT_int8_Y_arr[k]
-
         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
         temp2 = np.array(temp2)
         temp3 = np.sum(temp2)
@@ -383,31 +332,6 @@ if __name__ == '__main__':
 
     ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
     print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
-
-# SSIM
-    # SSIM  用 uint8 类型的数据
-    # Y
-    # ux_Y = np.mean(YYx_Y_arr)
-    # print ux_Y
-    # uy_Y = np.mean()
-    ux_Y = []
-    for i in range(iters):
-        temp = np.mean(Ori_Y_arr[i])    # 第i帧的均值
-        ux_Y.append(temp)
-
-
-
-    # data_ori_1st_frm：ori的原始图像， uint8类型
-    # YYx_Y_arr： NTT图像数据， uint8 类型
-    # print data_ori_1st_frm[0][0] >= 0   # 全部True
-    # print arr_Y >= 0    # 有True, 有False
-    # k = []
-    # for i in range(iters):
-    #     data_arr = np.array(data_ori_1st_frm[i][0])
-    #     ux_Y = np.mean(data_arr)
-    #     k.append(ux_Y)
-    # print k
-    #
 
 # cost U
     ccc_cost_U = []
@@ -448,18 +372,13 @@ if __name__ == '__main__':
     print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
 
 # 输出 csv 文件
-#     test_Y = pd.Series(ccc_psnr_Y_arr)
-#     test_U = pd.Series(ccc_psnr_U_arr)
-#     test_V = pd.Series(ccc_psnr_V_arr)
-#     test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
-#     test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
-#     test.to_csv('/home/lx/Videos/NTT500of1010.csv')
+    test_Y = pd.Series(ccc_psnr_Y_arr)
+    test_U = pd.Series(ccc_psnr_U_arr)
+    test_V = pd.Series(ccc_psnr_V_arr)
+    test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
+    test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
+    test.to_csv('/home/lx/Videos/new_ver_NTT.csv')
     print 'start show...'
-
-    # print 'uint8', np.mean(data_ori_1st_frm[0][0])   # data_ori_1st_frm：ori的原始图像Y分量， uint8类型
-    # print 'int8', np.mean(arr_Y)                    # arr_Y: ori的原始图像Y分量， uint8类型
-    # ux_Y = np.mean(YYx_Y_arr)
-    # print ux_Y
 
     cv2.waitKey(0)
 end = time.clock()
