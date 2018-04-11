@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 3
+    iters = 1
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -80,6 +80,13 @@ if __name__ == '__main__':
         print 'This is {}th frm -- Ori'.format(i)
 
     Ori_Y_arr = np.array(Ori_Y)  # Ori_Y_arr: Ori图像数据Y, uint8 类型
+    tempk = ndarray.tolist(Ori_Y_arr)
+    tempk2 = array(tempk)
+    tempk2 = reshape(tempk2, (iters, height, width))
+    print 'tempk2.shape', tempk2.shape
+
+    print type(tempk)  # <type 'list'>
+    print size(tempk)   # 2073600
     print 'The shape of Ori_Y_arr is :', Ori_Y_arr.shape       # (3, 1080, 1920)  3表示帧数
     Ori_U_arr = np.array(Ori_U)
     Ori_V_arr = np.array(Ori_V)
@@ -120,7 +127,7 @@ if __name__ == '__main__':
         # cv2.imshow("sohow{}".format(i), YYx[i])
         print 'This is {}th frm -- NTT'.format(i)
 
-    NTT_Y_arr = np.array(NTT_Y)  # YYx_Y_arr： NTT图像数据， uint8 类型
+    NTT_Y_arr = np.array(NTT_Y)  # NTT_Y_arr： NTT图像数据， uint8 类型
     NTT_U_arr = np.array(NTT_U)
     NTT_V_arr = np.array(NTT_V)
     print 'The shape of NTT_Y_arr.shape is :', NTT_Y_arr.shape   # (2, 1080, 1920) 同样2表示两帧视频
@@ -194,8 +201,8 @@ if __name__ == '__main__':
     # Ori的每一帧方差
     meanx_arr = np.ones((iters, height, width))
     for k in range(iters):
-        for i in range(len(meanx_arr[0])):
-            for j in range(len(meanx_arr[0][0])):
+        for i in range(len(meanx_arr[0])):          # 1080次
+            for j in range(len(meanx_arr[0][0])):   # 1920次
                 # if meanx_arr[k][i][j] == 1:
                     # print 'ux_Y_arr[{}] is {}'.format(k, ux_Y_arr[k])
                 meanx_arr[k][i][j] = ux_Y_arr[k]
@@ -297,6 +304,7 @@ if __name__ == '__main__':
         L_temp = (2 * ux_Y_arr[i] * uy_Y_arr[i] + C1) / (sigma2x_np[i] + sigma2y_np[i] + C1)
         L.append(L_temp)
     L = np.array(L)
+    print 'L(x,y)'
     print L
 
     # C(x,y)
@@ -305,6 +313,7 @@ if __name__ == '__main__':
         C_temp = (2 * sigma_x_np[i] * sigma_y_np[i] + C2)/(sigma2x_np[i] + sigma2y_np[i] + C2)
         C.append(C_temp)
     C = np.array(C)
+    print 'C(x,y)'
     print C
 
     # S(x,y)
@@ -313,6 +322,7 @@ if __name__ == '__main__':
         S_temp = (conv_sigma_xy_arr[i] + C3)/(sigma_x_np[i] * sigma_y_np[i] + C3)
         S.append(S_temp)
     S = np.array(S)
+    print 'S(x,y)'
     print S
 
     # SSIM score
@@ -321,6 +331,7 @@ if __name__ == '__main__':
         SSIM_temp = L[i] * C[i] * S[i]
         SSIM.append(SSIM_temp)
     SSIM = np.array(SSIM)
+    print 'SSIM'
     print SSIM
 
 
