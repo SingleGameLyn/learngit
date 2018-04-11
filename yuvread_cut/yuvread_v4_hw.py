@@ -63,15 +63,22 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     url_NTT = '/home/lx/Videos/NTT_repeat_20frms.yuv'
 
-    iters = 10
+    iters = 3
     datas_ori = []
     datas_NTT = []
     costs = []
 
 # 读取ori的第一帧图像
-    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)
+    data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 0)   # ori第一帧图像的数据,uint8类型
     # XX_arr = np.array(data_ori_1st_frm)
-    arr = data_ori_1st_frm[0][0].astype(int8)
+    # arr = data_ori_1st_frm[0][0].astype(int8)
+    print type(data_ori_1st_frm)    # <type 'tuple'>
+    arr_list = ndarray.tolist(data_ori_1st_frm[0][0])   # 找psnr的峰值,只需要用Y分量即可, 先转成list
+    print type(arr_list)    # <type 'list'>
+    arr = array(arr_list)   # 在转成 array , 得到 int64类型数据
+    print type(arr)         # <type 'numpy.ndarray'>
+    # NTT_int8_Y_list = ndarray.tolist(NTT_Y_arr)
+    # NTT_int8_Y_arr = array(NTT_int8_Y_list)
 
 # 一次性读取NTT十帧图像
     YYx = []
@@ -81,17 +88,21 @@ if __name__ == '__main__':
         # cv2.imshow("sohow{}".format(i), YYx[i])
         print 'This is {}th frm -- NTT'.format(i)
 
-    YYx_arr = np.array(YYx)
+    YYx_arr = np.array(YYx)     # NTT uint8类型数据
     print YYx_arr.shape     # (10, 1080, 1920)
     print arr.shape
 
-    arr2s = []
-    for i in range(iters):
-        arr2 = YYx_arr[i].astype(int8)
-        arr2s.append(arr2)
-        print 'change NTT {}th frm -- NTT'.format(i)
+    # arr2s = []
+    # for i in range(iters):
+    #     arr2 = YYx_arr[i].astype(int8)
+    #     arr2s.append(arr2)
+    #     print 'change NTT {}th frm -- NTT'.format(i)
 
-    arr2_arr = np.array(arr2s)  # NTT int8类型数据
+    arr2_list = ndarray.tolist(YYx_arr)  # 先转list
+    arr2_arr = np.array(arr2_list)      # 再转array, 得到 NTT int8类型数据
+
+    # arr2_arr = np.array(arr2s)  # NTT int8类型数据
+
     print arr2_arr.shape    # (10, 1080, 1920)
 
     ccc_cost = []
@@ -116,7 +127,7 @@ if __name__ == '__main__':
     name = ['Y_psnr']
     test = pd.DataFrame(columns=name, data=ccc_psnr_arr)
     # test.to_csv('/home/d066/Videos/NTT.csv')
-    test.to_csv('/home/lx/Videos/NTT.csv')
+    # test.to_csv('/home/lx/Videos/NTT.csv')
 
     print 'start show...'
 
