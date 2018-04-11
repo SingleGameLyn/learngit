@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 2
+    iters = 10
     datas_ori = []
     datas_NTT = []
     costs = []
@@ -298,77 +298,80 @@ if __name__ == '__main__':
     SSIM = np.array(SSIM)
     print 'SSIM'
     print SSIM
+    SSIM = np.reshape(SSIM, (iters, ))
 
 # calculate PSNR*******************************************************************************************************
     time3 = time.clock()
 
-# # cost Y
-#     ccc_cost_Y = []
-#     for k in range(iters):
-#         temp = Ori_int8_Y_arr[k] - NTT_int8_Y_arr[k]
-#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-#         temp2 = np.array(temp2)
-#         temp3 = np.sum(temp2)
-#         ccc = (1.0 / (width * height)) * temp3
-#         ccc_cost_Y.append(ccc)
-#         print 'calculate {}th frm -- Y'.format(k)
-#
-#     print ccc_cost_Y  # MSE 矩阵 <type 'list'>
-#     ccc_cost_Y_arr = np.array(ccc_cost_Y)
-#     print ccc_cost_Y_arr  # <type 'numpy.ndarray'>
-#     print ccc_cost_Y_arr.shape  # (40,)
-#
-#     ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
-#     print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
-#
-# # cost U
-#     ccc_cost_U = []
-#     for k in range(iters):
-#         temp = Ori_int8_U_arr[k] - NTT_int8_U_arr[k]
-#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-#         temp2 = np.array(temp2)
-#         temp3 = np.sum(temp2)
-#         ccc = (1.0 / (width * height)) * temp3
-#         ccc_cost_U.append(ccc)
-#         print 'calculate {}th frm -- U'.format(k)
-#
-#     print ccc_cost_U   # MSE 矩阵 <type 'list'>
-#     ccc_cost_U_arr = np.array(ccc_cost_U)
-#     print ccc_cost_U_arr  # <type 'numpy.ndarray'>
-#     print ccc_cost_U_arr.shape    # (40,)
-#
-#     ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
-#     print 'ccc_psnr_U_arr = ', ccc_psnr_U_arr
-#
-# # cost V
-#     ccc_cost_V = []
-#     for k in range(iters):
-#         temp = Ori_int8_V_arr[k] - NTT_int8_V_arr[k]
-#         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
-#         temp2 = np.array(temp2)
-#         temp3 = np.sum(temp2)
-#         ccc = (1.0 / (width * height)) * temp3
-#         ccc_cost_V.append(ccc)
-#         print 'calculate {}th frm -- U'.format(k)
-#
-#     print ccc_cost_V   # MSE 矩阵 <type 'list'>
-#     ccc_cost_V_arr = np.array(ccc_cost_V)
-#     print ccc_cost_V_arr  # <type 'numpy.ndarray'>
-#     print ccc_cost_V_arr.shape    # (40,)
-#
-#     ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
-#     print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
+# cost Y
+    ccc_cost_Y = []
+    for k in range(iters):
+        temp = Ori_int8_Y_arr[k] - NTT_int8_Y_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost_Y.append(ccc)
+        print 'calculate {}th frm -- Y'.format(k)
+
+    print ccc_cost_Y  # MSE 矩阵 <type 'list'>
+    ccc_cost_Y_arr = np.array(ccc_cost_Y)
+    print ccc_cost_Y_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_Y_arr.shape  # (40,)
+
+    ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
+    print 'ccc_psnr_Y_arr = ', ccc_psnr_Y_arr
+
+# cost U
+    ccc_cost_U = []
+    for k in range(iters):
+        temp = Ori_int8_U_arr[k] - NTT_int8_U_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost_U.append(ccc)
+        print 'calculate {}th frm -- U'.format(k)
+
+    print ccc_cost_U   # MSE 矩阵 <type 'list'>
+    ccc_cost_U_arr = np.array(ccc_cost_U)
+    print ccc_cost_U_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_U_arr.shape    # (40,)
+
+    ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
+    print 'ccc_psnr_U_arr = ', ccc_psnr_U_arr
+
+# cost V
+    ccc_cost_V = []
+    for k in range(iters):
+        temp = Ori_int8_V_arr[k] - NTT_int8_V_arr[k]
+        temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
+        temp2 = np.array(temp2)
+        temp3 = np.sum(temp2)
+        ccc = (1.0 / (width * height)) * temp3
+        ccc_cost_V.append(ccc)
+        print 'calculate {}th frm -- U'.format(k)
+
+    print ccc_cost_V   # MSE 矩阵 <type 'list'>
+    ccc_cost_V_arr = np.array(ccc_cost_V)
+    print ccc_cost_V_arr  # <type 'numpy.ndarray'>
+    print ccc_cost_V_arr.shape    # (40,)
+
+    ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
+    print 'ccc_psnr_V_arr = ', ccc_psnr_V_arr
 
     time4 = time.clock()
 
 # 输出 csv 文件
-#     time5 = time.clock()
-#     test_Y = pd.Series(ccc_psnr_Y_arr)
-#     test_U = pd.Series(ccc_psnr_U_arr)
-#     test_V = pd.Series(ccc_psnr_V_arr)
-#     test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V})
-#     test = test[['Y_psnr', 'U_psnr', 'V_psnr']]     # 按照YUV的顺序进行输出
-#     test.to_csv('/home/lx/Videos/new_ver_NTT.csv')
+    time5 = time.clock()
+    test_Y = pd.Series(ccc_psnr_Y_arr)
+    test_U = pd.Series(ccc_psnr_U_arr)
+    test_V = pd.Series(ccc_psnr_V_arr)
+    test_none = pd.Series([])
+    test_SSIM = pd.Series(SSIM)
+    test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V, '': test_none, 'SSIM':test_SSIM})
+    test = test[['Y_psnr', 'U_psnr', 'V_psnr', '', 'SSIM']]     # 按照YUV的顺序进行输出
+    test.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM.csv')
     print 'start show...'
 
     cv2.waitKey(0)
