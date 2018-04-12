@@ -19,7 +19,7 @@ import os
 # print 'psnr_ar = ', psnr_ar
 
 import csv
-with open('/home/lx/Videos/NTT.csv', 'U') as csvfile:
+with open('/home/lx/Videos/NTT_ppt.csv', 'U') as csvfile:
     reader = csv.DictReader(csvfile)
     column = [row['Y_psnr'] for row in reader]
 # print column
@@ -52,4 +52,4 @@ start = column.index(max(column)) * blk_size
 end = start + length * blk_size
 cut_ori = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
 
-os.system("del_data_yuv_start_end.exe   %s   %s  %s" % (cut_ori, start, end))
+# os.system("del_data_yuv_start_end.exe   %s   %s  %s" % (cut_ori, start, end))

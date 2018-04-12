@@ -53,9 +53,9 @@ if __name__ == '__main__':
     height = 1080
 
     url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
-    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
+    url_NTT = '/home/lx/Videos/NTT_50frms_cut40frms.yuv'
 
-    iters = 3
+    iters = 20
 
 # 读取ori的第一帧图像
     data_ori_1st_frm = yuv_import(url_ori, (height, width), 1, 1)   # ori第一帧图像的数据,uint8类型   <type 'tuple'>
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     name = ['Y_psnr']
     psnr_data = pd.DataFrame(columns=name, data=psnr_arr)
     # psnr_data.to_csv('/home/d066/Videos/NTT.csv')
-    psnr_data.to_csv('/home/lx/Videos/NTT.csv')
+    psnr_data.to_csv('/home/lx/Videos/NTT_ppt.csv')
 
     print 'start show...'
 
