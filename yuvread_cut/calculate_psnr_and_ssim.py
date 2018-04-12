@@ -278,7 +278,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
     return SSIM
 
 
-def cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters):
+def cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
     psnr_list = []
     for k in range(iters):
         temp = Ori_int64_Y_arr[k] - NTT_int64_Y_arr[k]
@@ -289,14 +289,14 @@ def cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters):
         psnr_list.append(ccc)
         print ('calculate {}th frm -- Y'.format(k))
 
-    print (psnr_list)  # MSE 矩阵 <type 'list'>
-    psrn_arr = np.array(psnr_list)
-    print (psrn_arr)  # <type 'numpy.ndarray'>
-    print (psrn_arr.shape)  # (40,)
+    print (psnr_list ) # MSE 矩阵 <type 'list'>
+    psnr_list_arr = np.array(psnr_list)
+    print (psnr_list_arr ) # <type 'numpy.ndarray'>
+    print (psnr_list_arr.shape ) # (40,)
 
-    ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(psrn_arr))  # psnr 矩阵
-    print ('ccc_psnr_Y_arr = ', ccc_psnr_Y_arr)
-    return psrn_arr
+    psnr_Y_arr = 20 * np.log10(255 / np.sqrt(psnr_list_arr))  # psnr 矩阵
+    print ('psnr_Y_arr = ', psnr_Y_arr)
+    return psnr_Y_arr
 
 
 if __name__ == '__main__':
@@ -304,10 +304,10 @@ if __name__ == '__main__':
     height = 1080
     # url_NTT = '/home/d066/Videos/NTT_repeat_20frms.yuv'
 
-    url_ori = '/home/d066/Videos/CrowdRun_1080p50-0_10frms.yuv'
+    url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
-    url_NTT = '/home/d066/Videos/NTT_50frms_cut40frms.yuv'
+    url_NTT = '/home/lx/Videos/NTT_50frms_cut40frms.yuv'
 
     iters = 3
     datas_ori = []
@@ -396,8 +396,8 @@ if __name__ == '__main__':
 
 # calculate PSNR*******************************************************************************************************
     time3 = time.clock()
-
-# cost Y
+#
+# #cost Y
 #     ccc_cost_Y = []
 #     for k in range(iters):
 #         temp = Ori_int64_Y_arr[k] - NTT_int64_Y_arr[k]
@@ -413,10 +413,10 @@ if __name__ == '__main__':
 #     print (ccc_cost_Y_arr ) # <type 'numpy.ndarray'>
 #     print (ccc_cost_Y_arr.shape ) # (40,)
 #
-#     ccc_psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
-#     print ('ccc_psnr_Y_arr = ', ccc_psnr_Y_arr)
-#
-    psnr_Y_arr = cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters)
+#     psnr_Y_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_Y_arr))  # psnr 矩阵
+#     print ('psnr_Y_arr = ', psnr_Y_arr)
+
+    psnr_Y_arr = cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width))
     print ('psnr_Y_arr = ', psnr_Y_arr)
 # cost U
 #     ccc_cost_U = []
@@ -437,7 +437,7 @@ if __name__ == '__main__':
 #     ccc_psnr_U_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_U_arr))   # psnr 矩阵
 #     print ('ccc_psnr_U_arr = ', ccc_psnr_U_arr)
 
-    psnr_U_arr = cal_psnr(Ori_int64_U_arr, NTT_int64_U_arr, iters)
+    psnr_U_arr = cal_psnr(Ori_int64_U_arr, NTT_int64_U_arr, iters, (height, width))
     print ('psnr_U_arr = ', psnr_U_arr)
 
 # cost V
@@ -459,7 +459,7 @@ if __name__ == '__main__':
 #     ccc_psnr_V_arr = 20 * np.log10(255 / np.sqrt(ccc_cost_V_arr))   # psnr 矩阵
 #     print ('ccc_psnr_V_arr = ', ccc_psnr_V_arr)
 
-    psnr_V_arr = cal_psnr(Ori_int64_V_arr, NTT_int64_V_arr, iters)
+    psnr_V_arr = cal_psnr(Ori_int64_V_arr, NTT_int64_V_arr, iters, (height, width))
     print ('psnr_V_arr = ', psnr_V_arr)
 
 
@@ -474,7 +474,7 @@ if __name__ == '__main__':
     test_SSIM = pd.Series(SSIM)
     test = pd.DataFrame({'Y_psnr': test_Y, 'U_psnr': test_U, 'V_psnr': test_V, '': test_none, 'SSIM':test_SSIM})
     test = test[['Y_psnr', 'U_psnr', 'V_psnr', '', 'SSIM']]     # 按照YUV的顺序进行输出
-    test.to_csv('/home/d066/Videos/new_ver_NTT_and_SSIM_test.csv')
+    test.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM_test.csv')
     print ('start show...')
 
     cv2.waitKey(0)
