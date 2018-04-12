@@ -84,10 +84,10 @@ if __name__ == '__main__':
     height = 1080
     # url_NTT = '/home/d066/Videos/NTT_repeat_20frms.yuv'
 
-    url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
+    url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_10frms.yuv'
     # url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit.yuv'
-    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
+    url_NTT = '/home/lx/Videos/NTT_50frms_cut40frms.yuv'
 
     iters = 10
     datas_ori = []
@@ -96,33 +96,33 @@ if __name__ == '__main__':
 
 # 读取ori的 iters 帧图像
     time13 = time.clock()
-    #
-    # Ori_Y = []
-    # Ori_U = []
-    # Ori_V = []
-    # for i in range(iters):
-    #     data_ori = yuv_import(url_ori, (height, width), 1, i)  # 读一帧,从第i帧开始,每次读一帧读YUV,是一个3行一列的矩阵
-    #     Ori_Y.append(data_ori[0][0])    # 读Y
-    #     Ori_U.append(data_ori[1][0])    # 读U
-    #     Ori_V.append(data_ori[2][0])    # 读V
-    #     print 'This is {}th frm -- Ori'.format(i)
-    #
-    # time11 = time.clock()
-    #
-    # Ori_Y_arr = np.array(Ori_Y)  # Ori_Y_arr: Ori图像数据Y, uint8 类型
-    # Ori_U_arr = np.array(Ori_U)
-    # Ori_V_arr = np.array(Ori_V)
-    #
-    # Ori_int8_Y_list = ndarray.tolist(Ori_Y_arr)     # Ori   转成list 过渡
-    # Ori_int8_U_list = ndarray.tolist(Ori_U_arr)
-    # Ori_int8_V_list = ndarray.tolist(Ori_V_arr)
-    #
-    # Ori_int8_Y_arr = array(Ori_int8_Y_list)     # (3, 1080, 1920) Ori图像数据 int64类型
-    # Ori_int8_U_arr = array(Ori_int8_U_list)
-    # Ori_int8_V_arr = array(Ori_int8_V_list)
-    #
-    # time12 = time.clock()
-    # print 'time12 - time11 = ', time12 - time11
+
+    Ori_Y = []
+    Ori_U = []
+    Ori_V = []
+    for i in range(iters):
+        data_ori = yuv_import(url_ori, (height, width), 1, i)  # 读一帧,从第i帧开始,每次读一帧读YUV,是一个3行一列的矩阵
+        Ori_Y.append(data_ori[0][0])    # 读Y
+        Ori_U.append(data_ori[1][0])    # 读U
+        Ori_V.append(data_ori[2][0])    # 读V
+        print 'This is {}th frm -- Ori'.format(i)
+
+    time11 = time.clock()
+
+    Ori_Y_arr = np.array(Ori_Y)  # Ori_Y_arr: Ori图像数据Y, uint8 类型
+    Ori_U_arr = np.array(Ori_U)
+    Ori_V_arr = np.array(Ori_V)
+
+    Ori_int8_Y_list = ndarray.tolist(Ori_Y_arr)     # Ori   转成list 过渡
+    Ori_int8_U_list = ndarray.tolist(Ori_U_arr)
+    Ori_int8_V_list = ndarray.tolist(Ori_V_arr)
+
+    Ori_int8_Y_arr = array(Ori_int8_Y_list)     # (3, 1080, 1920) Ori图像数据 int64类型
+    Ori_int8_U_arr = array(Ori_int8_U_list)
+    Ori_int8_V_arr = array(Ori_int8_V_list)
+
+    time12 = time.clock()
+    print 'time12 - time11 = ', time12 - time11
 
     time14 = time.clock()
 
@@ -208,13 +208,13 @@ if __name__ == '__main__':
                 # if meanx_arr[k][i][j] == 1:
                     # print 'ux_Y_arr[{}] is {}'.format(k, ux_Y_arr[k])
                 meanx_arr[k][i][j] = ux_Y_arr[k]
-        print 'calculate {}th frm -- meanx_arr'.format(i)
+        print 'calculate {}th frm -- meanx_arr'.format(k)
     print '**************1111111111111111111111111111111111111111111111111111111111111111**********'
     # print ux_Y_arr
     # print meanx_arr[0]         # 每一帧存放该帧的均值
     # print meanx_arr.shape   # (3, 1080, 1920)
     sigma2x_np = []
-    for i in range(iters):
+    for k in range(iters):
         temp1 = Ori_int8_Y_arr[i] - meanx_arr[i]
         print temp1.shape
         temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
@@ -222,7 +222,7 @@ if __name__ == '__main__':
         temp3 = np.sum(temp2)
         temp4 = (1.0 / ((height * width) - 1)) * temp3
         sigma2x_np.append(temp4)
-        print 'calculate {}th frm -- sigma2x_np'.format(i)
+        print 'calculate {}th frm -- sigma2x_np'.format(k)
 
     print type(sigma2x_np)
     sigma2x_np = np.array(sigma2x_np)       # (3,)
