@@ -238,10 +238,10 @@ if __name__ == '__main__':
     width = 1920
     height = 1080
 
-    url_ori = '/home/lx/Videos/CrowdRun_1080p50-0_10frms.yuv'
-    url_NTT = '/home/lx/Videos/NTT_50frms_cut40frms.yuv'
+    url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
+    url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 5
+    iters = 500
 
 # 读取ori的 iters 帧图像
     Ori_int64_YUV_arr = yuv_readfrms_int64(url_ori, (height, width), iters)
