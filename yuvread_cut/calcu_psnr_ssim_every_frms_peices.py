@@ -128,7 +128,7 @@ def yuv_import(filename, dims, numfrm, startfrm):
 def cal_psnr(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
     psnr_list = []
     for k in range(iters):
-        temp = Ori_int64_Y_arr[k] - NTT_int64_Y_arr[k]
+        temp = Ori_int64_Y_arr[k][0] - NTT_int64_Y_arr[k][0]
         temp2 = [[temp[i][j] ** 2 for j in range(len(temp[i]))] for i in range(len(temp))]
         temp2 = np.array(temp2)
         temp3 = np.sum(temp2)
@@ -148,15 +148,15 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
     ux_Y = []  # ux
     uy_Y = []  # uy
     for i in range(iters):
-        temp_Ori = np.mean(Ori_int64_Y_arr[i])  # 第i帧的均值
+        temp_Ori = np.mean(Ori_int64_Y_arr[i][0])  # 第i帧的均值
         ux_Y.append(temp_Ori)
-        temp_NTT = np.mean(NTT_int64_Y_arr[i])
+        temp_NTT = np.mean(NTT_int64_Y_arr[i][0])
         uy_Y.append(temp_NTT)
 
     # print type(ux_Y)    # <type 'list'>
     ux_Y_arr = np.array(ux_Y)
     uy_Y_arr = np.array(uy_Y)
-    print (ux_Y_arr)
+    # print (ux_Y_arr)
     print('ux_Y_arr', ux_Y_arr)  # [106.14581983 106.30893615 106.2186304 ]
     # print ux_Y_arr[0]   # 106.14581983
     # print ux_Y_arr.shape    # (3,)
@@ -173,21 +173,21 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
                 # if meanx_arr[k][i][j] == 1:
                 # print 'ux_Y_arr[{}] is {}'.format(k, ux_Y_arr[k])
                 meanx_arr[k][i][j] = ux_Y_arr[k]        # meanx_arr[0] # 每一帧存放该帧的均值 meanx_arr.shape   # (3, 1080, 1920)
-        print('calculate {}th frm -- meanx_arr'.format(k))
-    print('**************1111111111111111111111111111111111111111111111111111111111111111**********')
+        # print('calculate {}th frm -- meanx_arr'.format(k))
+    # print('**************1111111111111111111111111111111111111111111111111111111111111111**********')
 
     sigma2x_np = []
     for i in range(iters):
         temp1 = Ori_int64_Y_arr[i] - meanx_arr[i]
-        print(temp1.shape)
+        # print(temp1.shape)
         temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
         # temp2 = temp1 ** 2
         temp3 = np.sum(temp2)
         temp4 = (1.0 / ((height * width) - 1)) * temp3
         sigma2x_np.append(temp4)
-        print('calculate {}th frm -- sigma2x_np'.format(i))
+        # print('calculate {}th frm -- sigma2x_np'.format(i))
 
-    print(type(sigma2x_np))
+    # print(type(sigma2x_np))
     sigma2x_np = np.array(sigma2x_np)  # (3,)
     sigma2x_np = sigma2x_np[:, np.newaxis]  # (3, 1) 方差   Ori 就一列数据,每行代表一帧的方差
     # print('sigma2x_np.shape', sigma2x_np.shape)
@@ -202,7 +202,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
         for i in range(len(meany_arr[0])):
             for j in range(len(meany_arr[0][0])):
                 meany_arr[k][i][j] = uy_Y_arr[k]
-        print ('calculate {}th frm -- meany_arr'.format(k))
+        # print ('calculate {}th frm -- meany_arr'.format(k))
 
     sigma2y_np = []
     for i in range(iters):
@@ -212,7 +212,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
         temp3 = np.sum(temp2)
         temp4 = (1.0 / (height * width)) * temp3
         sigma2y_np.append(temp4)
-        print ('calculate {}th frm -- sigma2y_np'.format(i))
+        # print ('calculate {}th frm -- sigma2y_np'.format(i))
 
     sigma2y_np = np.array(sigma2y_np)  # (3,)
     sigma2y_np = sigma2y_np[:, np.newaxis]  # (3, 1)    NTT 方差
@@ -232,7 +232,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, iters, (height, width)):
         temp_arr_1frm_sum = np.sum(multi_xy[i])  # 第i帧的(X(i,j) - ux)*(Y(i,j) - uy)求和
         temp_conv_sigma_xy = (1.0 / ((width * height) - 1)) * temp_arr_1frm_sum  # 协方差计算公式
         conv_sigma_xy.append(temp_conv_sigma_xy)
-        print ('calculate {}th frm of conv_sigma_xy'.format(i))
+        # print ('calculate {}th frm of conv_sigma_xy'.format(i))
 
     conv_sigma_xy_arr = np.array(conv_sigma_xy)
     conv_sigma_xy_arr = conv_sigma_xy_arr[:, np.newaxis]  # (3, 1)   多行一列,每行存放协方差
@@ -303,27 +303,28 @@ if __name__ == '__main__':
     url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 4
+    iters = 500
 
-    grp_frms = 2
+    grp_frms = 1
     start_frm = 0
 
     Ori_int64_YUV_arr = []
     NTT_int64_YUV_arr = []
 
     while iters > 0:
+        print ('start_frm = ', start_frm)
         for i in range(grp_frms):
             # 读取ori的 iters 帧图像
-            Ori_int64_YUV_list = yuv_import(url_ori, (height, width), 1, start_frm*grp_frms + i)
+            Ori_int64_YUV_list = yuv_import(url_ori, (height, width), 1, start_frm + i)
             Ori_int64_YUV_arr.append(Ori_int64_YUV_list)
 
         Ori_int64_Y_arr = []
         Ori_int64_U_arr = []
         Ori_int64_V_arr = []
         for i in range(grp_frms):
-            Ori_int64_Y_list = Ori_int64_YUV_arr[i][0]
-            Ori_int64_U_list = Ori_int64_YUV_arr[i][1]
-            Ori_int64_V_list = Ori_int64_YUV_arr[i][2]
+            Ori_int64_Y_list = Ori_int64_YUV_arr[i+start_frm][0]
+            Ori_int64_U_list = Ori_int64_YUV_arr[i+start_frm][1]
+            Ori_int64_V_list = Ori_int64_YUV_arr[i+start_frm][2]
 
             Ori_int64_Y_arr.append(Ori_int64_Y_list)
             Ori_int64_U_arr.append(Ori_int64_U_list)
@@ -336,16 +337,16 @@ if __name__ == '__main__':
         # 读取NTT的 iters 帧图像
         for i in range(grp_frms):
             # 读取ori的 iters 帧图像
-            NTT_int64_YUV_list = yuv_import(url_ori, (height, width), 1, start_frm * grp_frms + i)
+            NTT_int64_YUV_list = yuv_import(url_NTT, (height, width), 1, start_frm + i)
             NTT_int64_YUV_arr.append(NTT_int64_YUV_list)
 
         NTT_int64_Y_arr = []
         NTT_int64_U_arr = []
         NTT_int64_V_arr = []
         for i in range(grp_frms):
-            NTT_int64_Y_list = NTT_int64_YUV_arr[i][0]
-            NTT_int64_U_list = NTT_int64_YUV_arr[i][1]
-            NTT_int64_V_list = NTT_int64_YUV_arr[i][2]
+            NTT_int64_Y_list = NTT_int64_YUV_arr[i+start_frm][0]
+            NTT_int64_U_list = NTT_int64_YUV_arr[i+start_frm][1]
+            NTT_int64_V_list = NTT_int64_YUV_arr[i+start_frm][2]
 
             NTT_int64_Y_arr.append(NTT_int64_Y_list)
             NTT_int64_U_arr.append(NTT_int64_U_list)
@@ -355,8 +356,6 @@ if __name__ == '__main__':
         NTT_int64_U_arr = np.array(NTT_int64_U_arr)  # NTT 图像U分量数据 int64类型
         NTT_int64_V_arr = np.array(NTT_int64_V_arr)  # NTT 图像V分量数据 int64类型
 
-        # # calculate SSIM******************************************************************************************
-        SSIM = cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, grp_frms, (height, width))
 
         # calculate PSNR*******************************************************************************************
         # #cost Y
@@ -366,6 +365,10 @@ if __name__ == '__main__':
         # cost V
         psnr_V = cal_psnr(Ori_int64_V_arr, NTT_int64_V_arr, grp_frms, (height, width))
 
+        # # calculate SSIM******************************************************************************************
+        SSIM = cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, grp_frms, (height, width))
+
+
         # 输出 csv 文件
         name = ['Y_psnr', 'U_psnr', 'V_psnr', '', 'SSIM']
 
@@ -373,12 +376,19 @@ if __name__ == '__main__':
         # df.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM_test_HHH222222.csv')
 
         if start_frm == 0:
-            df = pd.DataFrame([[psnr_Y, psnr_U, psnr_V, None, SSIM]], columns=name)
-        else:
-            df2 = pd.DataFrame([[psnr_Y, psnr_U, psnr_V, None, SSIM]], columns=name)
-            df = df.append(df2, ignore_index=True)
+            df = pd.DataFrame([[psnr_Y[0], psnr_U[0], psnr_V[0], None, SSIM[0]]], columns=name)
+            for i in range(grp_frms - 1):
+                df3 = pd.DataFrame([[psnr_Y[i+1], psnr_U[i+1], psnr_V[i+1], None, SSIM[i+1]]], columns=name)
+                df = df.append(df3, ignore_index=True)
 
-        df.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM_test_many_piece.csv')
+
+        else:
+            for i in range(grp_frms):
+                df2 = pd.DataFrame([[psnr_Y[i], psnr_U[i], psnr_V[i], None, SSIM[i]]], columns=name)
+            # df2 = pd.DataFrame([[psnr_Y, psnr_U, psnr_V, None, SSIM]], columns=name)
+                df = df.append(df2, ignore_index=True)
+
+        df.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM_test_many_piece_417_v4_1grpfrm.csv')
 
         start_frm = start_frm + grp_frms
         iters = iters - grp_frms

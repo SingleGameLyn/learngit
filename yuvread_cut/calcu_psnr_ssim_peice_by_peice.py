@@ -102,7 +102,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, (height, width)):
     temp1 = Ori_int64_Y_arr[0] - meanx_arr
     temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
     temp3 = np.sum(temp2)
-    sigma2x_np = (1.0 / ((height * width) - 1)) * temp3  # 当前帧的方差
+    sigma2x_np = (1.0 / ((height * width) - 1)) * temp3  # Ori当前帧的方差
     sigma_x_np = sqrt(sigma2x_np)  # Ori 标准差  当前帧标准差
 
     # NTT的每一帧方差
@@ -114,8 +114,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, (height, width)):
     temp1 = NTT_int64_Y_arr[0] - meany_arr
     temp2 = [[temp1[i][j] ** 2 for j in range(len(temp1[i]))] for i in range(len(temp1))]
     temp3 = np.sum(temp2)
-    sigma2y_np = (1.0 / (height * width)) * temp3
-
+    sigma2y_np = (1.0 / (height * width - 1)) * temp3   # NTT当前帧的方差
     sigma_y_np = sqrt(sigma2y_np)  # NTT 标准差
 
     # multi_xy = []  # 存放计算 (X(i,j) - ux)*(Y(i,j) - uy)得到的矩阵
@@ -129,7 +128,7 @@ def cal_ssim(Ori_int64_Y_arr, NTT_int64_Y_arr, (height, width)):
     LL = 255
     C1 = (K1 * LL) ** 2
     C2 = (K2 * LL) ** 2
-    C3 = C2 / 2
+    C3 = C2 / 2.0
     # L(x,y)
     Lxy = (2 * ux_Y * uy_Y + C1) / ((ux_Y) ** 2 + (uy_Y) ** 2 + C1)
     # print ('L(x,y)')
@@ -172,7 +171,7 @@ if __name__ == '__main__':
     url_ori = '/home/lx/Videos/CrowdRun_1080p50.yuv'
     url_NTT = '/home/lx/Videos/NTT_1080p50_10Mbps_8bit_500of1010.yuv'
 
-    iters = 500
+    iters = 2
 
     for i in range(iters):
         print ('This is {}th calculation'.format(i))
@@ -213,7 +212,7 @@ if __name__ == '__main__':
             df2 = pd.DataFrame([[psnr_Y, psnr_U, psnr_V, None, SSIM]], columns=name)
             df = df.append(df2, ignore_index=True)
 
-        df.to_csv('/home/lx/Videos/new_ver_NTT_and_SSIM_test_HHH.csv')
+        df.to_csv('/home/lx/Videos/calcu_psnr_ssim_piece_by_piece418.csv')
 
         # if i == 0:
         #     df = pd.DataFrame([test_Y, test_U, test_V, test_none, test_SSIM], columns=name)
